@@ -1,4 +1,588 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - EcoFinds</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary-green: #2E7D32;
+    --primary-light: #4CAF50;
+    --primary-gradient: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+    --secondary-purple: #6A1B9A;
+    --secondary-light: #8E24AA;
+    --accent-gold: #F57C00;
+    --accent-light: #FF9800;
+    --neutral-dark: #1A1A1A;
+    --neutral-medium: #4A4A4A;
+    --neutral-light: #F8F9FA;
+    --white: #FFFFFF;
+    --success-green: #00C853;
+    --shadow-soft: 0 10px 40px rgba(46, 125, 50, 0.1);
+    --shadow-hover: 0 20px 60px rgba(46, 125, 50, 0.15);
+    --border-radius: 16px;
+    --border-radius-lg: 24px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E8 50%, #FFFFFF 100%);
+    color: var(--neutral-dark);
+    line-height: 1.7;
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Enhanced Container */
+.container {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 4rem 3rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-gradient);
+}
+
+.container:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Typography Enhancements */
+.display-4 {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    position: relative;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.lead {
+    font-size: 1.5rem;
+    color: var(--neutral-medium);
+    font-weight: 400;
+    margin-bottom: 3rem;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 1rem;
+}
+
+h3::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 2rem;
+    background: var(--primary-gradient);
+    border-radius: 2px;
+}
+
+h4 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--neutral-dark);
+    margin-bottom: 1rem;
+}
+
+h5 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--neutral-dark);
+    margin-bottom: 0.75rem;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--neutral-medium);
+    margin-bottom: 1.5rem;
+}
+
+/* Feature Cards */
+.feature-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(46, 125, 50, 0.08);
+    height: 100%;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.02) 0%, rgba(76, 175, 80, 0.02) 100%);
+    z-index: 0;
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(46, 125, 50, 0.15);
+}
+
+.feature-card:hover::before {
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.05) 100%);
+}
+
+.feature-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card i {
+    color: var(--primary-light);
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+}
+
+.feature-card:hover i {
+    color: var(--primary-green);
+    transform: scale(1.1);
+}
+
+/* Process Steps */
+.process-step {
+    background: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%);
+    border-radius: var(--border-radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.process-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-gradient);
+    z-index: 0;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.process-step:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-light);
+    color: var(--white);
+}
+
+.process-step:hover::before {
+    opacity: 1;
+}
+
+.process-step > * {
+    position: relative;
+    z-index: 1;
+}
+
+.process-step i {
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+.process-step:hover i {
+    color: var(--white);
+    transform: scale(1.2);
+}
+
+.process-step h5,
+.process-step p {
+    transition: var(--transition);
+}
+
+.process-step:hover h5,
+.process-step:hover p {
+    color: var(--white);
+}
+
+/* Enhanced Buttons */
+.btn {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-block;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--transition);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(46, 125, 50, 0.4);
+    color: var(--white);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-outline-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--primary-gradient);
+    z-index: -1;
+    transition: var(--transition);
+}
+
+.btn-outline-primary:hover::after {
+    width: 100%;
+}
+
+.btn-outline-primary:hover {
+    color: var(--white);
+    border-color: var(--primary-green);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.btn-lg {
+    padding: 1.25rem 3rem;
+    font-size: 1.2rem;
+}
+
+/* Section Spacing */
+.mb-5 {
+    margin-bottom: 4rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 2.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 2rem !important;
+}
+
+/* Team Section Enhancement */
+.team-section {
+    background: linear-gradient(135deg, var(--neutral-light) 0%, var(--white) 100%);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    margin: 3rem 0;
+}
+
+/* Call-to-Action Section */
+.cta-section {
+    background: var(--primary-gradient);
+    border-radius: var(--border-radius-lg);
+    padding: 4rem 3rem;
+    text-align: center;
+    margin-top: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    animation: rotate 20s linear infinite;
+}
+
+.cta-section h4,
+.cta-section p {
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+}
+
+.cta-section h4 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.cta-section p {
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+}
+
+.cta-section .btn {
+    margin: 0 1rem 1rem 0;
+}
+
+.cta-section .btn-outline-primary {
+    border-color: var(--white);
+    color: var(--white);
+}
+
+.cta-section .btn-outline-primary::after {
+    background: var(--white);
+}
+
+.cta-section .btn-outline-primary:hover {
+    color: var(--primary-green);
+}
+
+#cardsinrow {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        margin: 1rem;
+        padding: 3rem 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 2rem 1.5rem;
+        margin: 1rem 0.5rem;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+    }
+    
+    .lead {
+        font-size: 1.2rem;
+    }
+    
+    h3 {
+        font-size: 1.8rem;
+    }
+    
+    .feature-card,
+    .process-step {
+        margin-bottom: 2rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .cta-section {
+        padding: 3rem 2rem;
+    }
+    
+    .cta-section h4 {
+        font-size: 2rem;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1.1rem;
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.2rem 1rem;
+        min-height: 220px;
+        max-height: 260px;
+    }
+    
+    .process-step {
+        padding: 1.2rem 0.8rem;
+        min-height: 180px;
+        max-height: 220px;
+    }
+    
+    .process-step h5 {
+        font-size: 1rem;
+    }
+    
+    .process-step p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Dark Mode */
+
+:root {
+    --primary-green: #50ba42;
+    --primary-light: #127e81;
+    --primary-gradient: linear-gradient(135deg, #50ba42 0%, #127e81 100%);
+    --secondary-purple: #127e81;
+    --secondary-light: #50ba42;
+    --accent-gold: #50ba42;
+    --accent-light: #127e81;
+    --neutral-dark: #f0f0f0;
+    --neutral-medium: #cccccc;
+    --neutral-light: #222222;
+    --white: #000000;
+    --success-green: #50ba42;
+}
+
+body {
+    background: #000000 !important;
+    color: var(--neutral-dark) !important;
+}
+.container, .feature-card, .process-step, .team-section, .cta-section {
+    background: #111111 !important;
+    color: var(--neutral-dark) !important;
+    border-color: rgba(80, 186, 66, 0.2) !important;
+}
+h1, h2, h3, h4, h5, h6, .text-primary {
+    color: var(--primary-green) !important;
+}
+a, .btn-primary, .btn-outline-primary {
+    color: var(--primary-light) !important;
+}
+.btn-primary {
+    background: var(--primary-gradient) !important;
+    color: #000000 !important;
+}
+
+    </style> 
+</head>
+<body>
+    {% extends 'base.html' %}
 
 {% block title %}About Us - EcoFinds{% endblock %}
 
@@ -11,7 +595,7 @@
                 <p class="lead">Your trusted marketplace for second-hand products</p>
             </div>
 
-            <div class="row mb-5">
+            <div class="row mb-5 animate-on-scroll">
                 <div class="col-md-6">
                     <h3 class="text-primary">Our Mission</h3>
                     <p>At EcoFinds, we believe in giving products a second life. Our platform connects buyers and sellers of quality second-hand items, promoting sustainability while helping you save money.</p>
@@ -22,80 +606,112 @@
                 </div>
             </div>
 
-            <div class="row mb-5">
+            <div class="row mb-5 animate-on-scroll">
                 <div class="col-12">
                     <h3 class="text-primary text-center mb-4">Why Choose EcoFinds?</h3>
                 </div>
-                <div class="col-md-4 text-center mb-4">
-                    <i class="fas fa-leaf fa-3x text-primary mb-3"></i>
-                    <h5>Eco-Friendly</h5>
-                    <p>Reduce waste and environmental impact by giving products a second life.</p>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <i class="fas fa-dollar-sign fa-3x text-primary mb-3"></i>
-                    <h5>Save Money</h5>
-                    <p>Find amazing deals on quality second-hand products at fraction of retail prices.</p>
-                </div>
-                <div class="col-md-4 text-center mb-4">
-                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-                    <h5>Safe & Secure</h5>
-                    <p>Verified sellers, secure payments, and buyer protection for peace of mind.</p>
+                <div id="cardsinrow">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <i class="fas fa-leaf fa-3x mb-3"></i>
+                            <h5>Eco-Friendly</h5>
+                            <p>Reduce waste and environmental impact by giving products a second life.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <i class="fas fa-dollar-sign fa-3x mb-3"></i>
+                            <h5>Save Money</h5>
+                            <p>Find amazing deals on quality second-hand products at fraction of retail prices.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card">
+                            <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                            <h5>Safe & Secure</h5>
+                            <p>Verified sellers, secure payments, and buyer protection for peace of mind.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row mb-5">
+            <div class="row mb-5 animate-on-scroll process-section">
                 <div class="col-12">
                     <h3 class="text-primary text-center mb-4">How It Works</h3>
                 </div>
-                <div class="col-md-3 text-center mb-3">
-                    <div class="bg-light p-3 rounded">
-                        <i class="fas fa-search fa-2x text-primary mb-2"></i>
-                        <h6>1. Browse</h6>
-                        <p class="small">Search and filter through thousands of products</p>
+                <div id="cardsinrow">
+                    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+                        <div class="process-step">
+                            <i class="fas fa-search fa-2x mb-2"></i>
+                            <h5>1. Browse</h5>
+                            <p class="small">Search and filter through thousands of products</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center mb-3">
-                    <div class="bg-light p-3 rounded">
-                        <i class="fas fa-handshake fa-2x text-primary mb-2"></i>
-                        <h6>2. Connect</h6>
-                        <p class="small">Message sellers and negotiate deals</p>
+                    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+                        <div class="process-step">
+                            <i class="fas fa-handshake fa-2x mb-2"></i>
+                            <h5>2. Connect</h5>
+                            <p class="small">Message sellers and negotiate deals</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center mb-3">
-                    <div class="bg-light p-3 rounded">
-                        <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
-                        <h6>3. Pay</h6>
-                        <p class="small">Secure payment processing</p>
+                    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+                        <div class="process-step">
+                            <i class="fas fa-credit-card fa-2x mb-2"></i>
+                            <h5>3. Pay</h5>
+                            <p class="small">Secure payment processing</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center mb-3">
-                    <div class="bg-light p-3 rounded">
-                        <i class="fas fa-truck fa-2x text-primary mb-2"></i>
-                        <h6>4. Receive</h6>
-                        <p class="small">Get your items delivered safely</p>
+                    <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+                        <div class="process-step">
+                            <i class="fas fa-truck fa-2x mb-2"></i>
+                            <h5>4. Receive</h5>
+                            <p class="small">Get your items delivered safely</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row animate-on-scroll">
                 <div class="col-12">
-                    <h3 class="text-primary text-center mb-4">Our Team</h3>
-                    <p class="text-center">We're a passionate team of developers, designers, and environmental enthusiasts working together to make sustainable shopping accessible to everyone.</p>
+                    <div class="team-section">
+                        <h3 class="text-primary text-center mb-4">Our Team</h3>
+                        <p class="text-center">We're a passionate team of developers, designers, and environmental enthusiasts working together to make sustainable shopping accessible to everyone.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="text-center mt-5">
-                <h4 class="text-primary">Join the EcoFinds Community</h4>
+            <div class="cta-section animate-on-scroll">
+                <h4>Join the EcoFinds Community</h4>
                 <p>Be part of the movement towards sustainable consumption</p>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
-                    <a href="{% url 'products:create_product' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
-                {% else %}
-                    <a href="{% url 'custom_auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
-                    <a href="{% url 'custom_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
-                {% endif %}
+                <a href="{% url 'firebase_auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
+                <a href="{% url 'firebase_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Simple scroll animation
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+    });
+});
+</script>
+
 {% endblock %}
+</body>
+</html>
