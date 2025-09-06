@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}EcoFinds - Second Hand Marketplace{% endblock %}
@@ -16,7 +17,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="https://via.placeholder.com/600x400/2d5a27/ffffff?text=EcoFinds" class="img-fluid rounded" alt="EcoFinds Hero">
+                <!-- <img src="https://via.placeholder.com/600x400/2d5a27/ffffff?text=EcoFinds" class="img-fluid rounded" alt="EcoFinds Hero"> -->
             </div>
         </div>
     </div>
@@ -27,24 +28,117 @@
     <div class="container">
         <h2 class="text-center mb-5">Shop by Category</h2>
         <div class="row">
-            {% for category in categories %}
-            <div class="col-md-4 col-lg-2 mb-4">
-                <div class="card text-center h-100">
+            <!-- Mobiles Category -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-center h-100 category-card">
                     <div class="card-body">
-                        <i class="fas fa-{{ category.name|lower|slice:':1' }} fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">{{ category.name }}</h5>
-                        <a href="{% url 'main:product_list' %}?category={{ category.slug }}" class="btn btn-outline-primary btn-sm">View Products</a>
+                        <div class="category-icon mb-3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="5" y="2" width="14" height="20" rx="2" stroke="#2d5a27" stroke-width="2"/>
+                                <rect x="6" y="4" width="12" height="16" rx="1" fill="#2d5a27" fill-opacity="0.1"/>
+                                <circle cx="12" cy="18" r="1" fill="#2d5a27"/>
+                            </svg>
+                        </div>
+                        <h5 class="card-title">Mobiles</h5>
+                        <p class="card-text text-muted">Smartphones and its accessories</p>
+                        <a href="{% url 'main:product_list' %}?category=mobiles" class="btn btn-outline-primary btn-sm">View Products</a>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">No categories available yet.</p>
+            
+            <!-- Electronic Appliances Category -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="category-icon mb-3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="6" width="18" height="12" rx="2" stroke="#2d5a27" stroke-width="2"/>
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="#2d5a27" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="2" fill="#2d5a27"/>
+                            </svg>
+                        </div>
+                        <h5 class="card-title">Electronic Appliances</h5>
+                        <p class="card-text text-muted">Home appliances and electronics</p>
+                        <a href="{% url 'main:product_list' %}?category=electronics" class="btn btn-outline-primary btn-sm">View Products</a>
+                    </div>
+                </div>
             </div>
-            {% endfor %}
+            
+            <!-- Vehicles Category -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="category-icon mb-3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM19 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" fill="#2d5a27"/>
+                                <path d="M17 17H7l-2-5h14l-2 5z" fill="#2d5a27" fill-opacity="0.1"/>
+                                <path d="M7 17H5l-2-5h14l-2 5h-2" stroke="#2d5a27" stroke-width="2"/>
+                                <path d="M5 12V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v5" stroke="#2d5a27" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h5 class="card-title">Vehicles</h5>
+                        <p class="card-text text-muted">Cars, bikes, scooters, and vehicle parts</p>
+                        <a href="{% url 'main:product_list' %}?category=vehicles" class="btn btn-outline-primary btn-sm">View Products</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Others Category -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card text-center h-100 category-card">
+                    <div class="card-body">
+                        <div class="category-icon mb-3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#2d5a27" stroke-width="2"/>
+                                <path d="M9 9h6v6H9z" fill="#2d5a27" fill-opacity="0.1"/>
+                                <path d="M9 9h6v6H9z" stroke="#2d5a27" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="1" fill="#2d5a27"/>
+                            </svg>
+                        </div>
+                        <h5 class="card-title">Others</h5>
+                        <p class="card-text text-muted">Furniture, books, clothing, and more</p>
+                        <a href="{% url 'main:product_list' %}?category=others" class="btn btn-outline-primary btn-sm">View Products</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<style>
+.category-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(45, 90, 39, 0.15);
+}
+
+.category-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.category-card .card-title {
+    color: #2d5a27;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.category-card .btn-outline-primary {
+    border-color: #2d5a27;
+    color: #2d5a27;
+}
+
+.category-card .btn-outline-primary:hover {
+    background-color: #2d5a27;
+    border-color: #2d5a27;
+    color: white;
+}
+</style>
 
 <!-- Featured Products -->
 {% if featured_products %}

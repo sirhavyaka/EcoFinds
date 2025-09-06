@@ -11,6 +11,20 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        .navbtn{
+            padding-left: 6px;
+            text-align: center;
+        }
+        .navbtn:hover{
+            background-color: #2d5a27;
+            color: white;
+            border-radius: 5px;
+        }
+        .bar{
+            height: 80px;
+            padding-top: 10px;
+            font-size: 1.2rem;
+        }
         .navbar-brand {
             font-weight: bold;
             color: #2d5a27 !important;
@@ -39,10 +53,10 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bar">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'main:home' %}">
-                <i class="fas fa-recycle"></i> EcoFinds
+            <a class="navbar-brand" style="font-size: 2rem;" href="{% url 'main:home' %}">
+                <i class="fas fa-recycle" style="margin-right: 8px;"></i> EcoFinds
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -50,17 +64,17 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
+                <ul class="navbar-nav me-auto" style="padding-left: 10px;">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:product_list' %}">Products</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:about' %}">About</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:contact' %}">Contact</a>
                     </li>
                 </ul>
@@ -85,10 +99,10 @@
                             </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
+                        <li class="nav-item navbtn">
                             <a class="nav-link" href="{% url 'firebase_auth:login' %}">Login</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item navbtn">
                             <a class="nav-link" href="{% url 'firebase_auth:register' %}">Register</a>
                         </li>
                     {% endif %}
@@ -144,7 +158,7 @@
             </div>
             <hr class="my-4">
             <div class="text-center">
-                <p>&copy; 2024 EcoFinds. All rights reserved.</p>
+                <p>&copy; 2025 EcoFinds. All rights reserved.</p>
             </div>
         </div>
     </footer>
