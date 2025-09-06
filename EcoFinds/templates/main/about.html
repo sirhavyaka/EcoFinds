@@ -91,8 +91,8 @@
                     <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
                     <a href="{% url 'products:create_product' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
                 {% else %}
-                    <a href="{% url 'auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
-                    <a href="{% url 'auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                    <a href="{% url 'custom_auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
+                    <a href="{% url 'custom_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
                 {% endif %}
             </div>
         </div>

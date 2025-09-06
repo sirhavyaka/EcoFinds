@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+{% load static %}
+{% csrf_token %}
+
+{% block title %}EcoFinds Chatbot{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        
+    }
+    
+    .chat-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        color: white;
+        border-radius: 10px;
+    }
+    
+    .chat-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    .chat-header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+    }
+    
+    .chat-messages {
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        
+        margin-bottom: 20px;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+        
+    }
+    
+    .message.user {
+        justify-content: flex-end;
+        
+    }
+    
+    .message.bot {
+        justify-content: flex-start;
+
+    }
+    
+    .message-content {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        word-wrap: break-word;
+        line-height: 1.4;
+        background-color: rgb(56, 55, 55);
+    }
+    
+    .message.user .message-content {
+       
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .message.bot .message-content {
+       
+        color: #50ba42;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin: 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .message.user .message-avatar {
+        color: white;
+        order: 1;
+    }
+    
+    .message.bot .message-avatar {
+        background: #28a745;
+        color: white;
+    }
+    
+    .chat-input-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+       
+    }
+    
+    .chat-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #dee2e6;
+        border-radius: 25px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    
+    .chat-input:focus {
+        border-color: #28a745;
+    }
+    
+    .send-button {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .send-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+    
+    .send-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+       
+        border-radius: 18px;
+        border-bottom-left-radius: 4px;
+        max-width: 70%;
+    }
+    
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #6c757d;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    
+    @keyframes typing {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+    }
+    
+    .error-message {
+        
+        color: #721c24;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .welcome-message {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid #28a745;
+    }
+    
+    .welcome-message h3 {
+        color: #28a745;
+        margin-bottom: 10px;
+    }
+    
+    .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+    }
+    
+    .quick-action-btn {
+        padding: 8px 16px;
+        border: 2px solid #28a745;
+        color: #28a745;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-btn:hover {
+        background: #28a745;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" >
+    <div class="chat-container">
+        <div class="chat-header" style="border: 1px solid #50ba42;">
+            <h1>🌱 EcoFinds Assistant</h1>
+            <p>Your sustainable shopping companion powered by AI</p>
+        </div>
+        
+        <div class="welcome-message">
+            <h3>Welcome to EcoFinds</h3>
+            <p>I'm here to help you find great second-hand products and answer questions about sustainable shopping. Ask me about products, sustainability, or anything related to EcoFinds!</p>
+            
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="sendQuickMessage('What products do you have?')">Browse Products</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('How does EcoFinds promote sustainability?')">Sustainability</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('What are your shipping options?')">Shipping Info</button>
+                <button class="quick-action-btn" onclick="sendQuickMessage('How do I return an item?')">Returns</button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" id="messageInput" class="chat-input" placeholder="Ask me anything about EcoFinds..." maxlength="500">
+            <button id="sendButton" class="send-button" onclick="sendMessage()">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let isLoading = false;
+
+// Initialize chat
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    
+    // Add welcome message
+    addBotMessage("Hello! I'm your Eco. I can help you find products, answer questions about sustainability, shipping, returns, and more. What would you like to know?");
+    
+    // Handle Enter key
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Auto-focus input
+    messageInput.focus();
+});
+
+function sendQuickMessage(message) {
+    document.getElementById('messageInput').value = message;
+    sendMessage();
+}
+
+function sendMessage() {
+    if (isLoading) return;
+    
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message to chat
+    addUserMessage(message);
+    
+    // Clear input
+    messageInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Send to backend
+    sendToBackend(message);
+}
+
+function addUserMessage(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user';
+    messageDiv.innerHTML = `
+        <div class="message-content">${escapeHtml(message)}</div>
+        <div class="message-avatar"></div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function addBotMessage(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">${escapeHtml(message)}</div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function showTypingIndicator() {
+    const chatMessages = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="typing-indicator">
+            <span>EcoFinds Assistant is typing</span>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    scrollToBottom();
+}
+
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+function scrollToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function sendToBackend(message) {
+    isLoading = true;
+    const sendButton = document.getElementById('sendButton');
+    sendButton.disabled = true;
+    sendButton.textContent = 'Sending...';
+    
+        try {
+            const csrfToken = getCookie('csrftoken');
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            // Add CSRF token if available
+            if (csrfToken) {
+                headers['X-CSRFToken'] = csrfToken;
+            }
+            
+            const response = await fetch('{% url "chatbot:chat_api" %}', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ message: message })
+            });
+        
+        const data = await response.json();
+        
+        hideTypingIndicator();
+        
+        if (data.success) {
+            // Add 1-second thinking delay before showing response
+            setTimeout(() => {
+                addBotMessage(data.response);
+            }, 1000);
+        } else {
+            addBotMessage('Sorry, I encountered an error. Please try again or contact our support team.');
+            console.error('Chat API error:', data.message);
+        }
+        
+    } catch (error) {
+        hideTypingIndicator();
+        addBotMessage('Sorry, I\'m having trouble connecting right now. Please check your internet connection and try again.');
+        console.error('Network error:', error);
+    } finally {
+        isLoading = false;
+        sendButton.disabled = false;
+        sendButton.textContent = 'Send';
+        document.getElementById('messageInput').focus();
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

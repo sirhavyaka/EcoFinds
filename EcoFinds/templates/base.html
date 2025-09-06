@@ -12,9 +12,71 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+       
+        *{
+            background-color: black;
+            color:#50ba42;
+        }
+        .navbar {
+            background-color: black !important;
+        }
+        .navbar-nav {
+            background-color: black !important;
+        }
+        .navbar-nav .nav-link {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background-color: #50ba42 !important;
+            border-radius: 5px;
+        }
+        .navbtn{
+            padding-left: 6px;
+            text-align: center;
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .navbtn:hover{
+            background-color: #50ba42 !important;
+            color: white !important;
+            border-radius: 5px;
+        }
+        .navbar-brand {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .navbar-toggler {
+            background-color: #50ba42 !important;
+            border-color: #50ba42 !important;
+        }
+        .dropdown-menu {
+            background-color: black !important;
+            border: 1px solid #50ba42 !important;
+        }
+        .dropdown-item {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .dropdown-item:hover {
+            background-color: #50ba42 !important;
+            color: white !important;
+        }
+        .sellbtn{
+            background-color: #127e81;
+            color: white;
+            border-radius: 5px;
+        }
+        .bar{
+            height: 80px;
+            padding-top: 10px;
+            font-size: 1.2rem;
+            color: #50ba42;
+        }
         .navbar-brand {
             font-weight: bold;
-            color: #2d5a27 !important;
+            color: #50ba42;
         }
         .btn-primary {
             background-color: #2d5a27;
@@ -31,19 +93,18 @@
             transform: translateY(-5px);
         }
         .footer {
-            background-color: #2d5a27;
-            color: white;
-            margin-top: 50px;
+            border: 1px solid #50ba42;
         }
+       
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bar">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'main:home' %}">
-                <i class="fas fa-recycle"></i> EcoFinds
+            <a class="navbar-brand" style="font-size: 2rem;" href="{% url 'main:home' %}">
+                <i class="fas fa-recycle" style="margin-right: 8px;"></i> EcoFinds
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -51,18 +112,23 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
+                <ul class="navbar-nav me-auto" style="padding-left: 10px;">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'products:product_list' %}">Products</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:about' %}">About</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item navbtn">
                         <a class="nav-link" href="{% url 'main:contact' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'chatbot:chat_view' %}">
+                            <i class="fas fa-robot"></i> Chat
+                        </a>
                     </li>
                 </ul>
                 
@@ -82,15 +148,15 @@
                                 <li><a class="dropdown-item" href="{% url 'user_profile:user_orders' %}">My Orders</a></li>
                                 <li><a class="dropdown-item" href="{% url 'user_profile:wishlist_view' %}">Wishlist</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{% url 'custom_auth:logout' %}">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'auth:login' %}">Login</a>
+                        <li class="nav-item navbtn">
+                            <a class="nav-link" href="{% url 'custom_auth:login' %}">Login</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'auth:register' %}">Register</a>
+                        <li class="nav-item navbtn">
+                            <a class="nav-link" href="{% url 'custom_auth:register' %}">Register</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -145,7 +211,7 @@
             </div>
             <hr class="my-4">
             <div class="text-center">
-                <p>&copy; 2024 EcoFinds. All rights reserved.</p>
+                <p>&copy; 2025 EcoFinds. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -156,5 +222,8 @@
     <script src="{% static 'js/django-auth.js' %}"></script>
     
     {% block extra_js %}{% endblock %}
+    
+  
+  
 </body>
 </html>
