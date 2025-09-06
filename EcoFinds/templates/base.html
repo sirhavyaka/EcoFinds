@@ -11,14 +11,55 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        *{
+            background-color: black;
+            color:#50ba42;
+        }
+        .navbar {
+            background-color: black !important;
+        }
+        .navbar-nav {
+            background-color: black !important;
+        }
+        .navbar-nav .nav-link {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background-color: #50ba42 !important;
+            border-radius: 5px;
+        }
         .navbtn{
             padding-left: 6px;
             text-align: center;
+            color: #50ba42 !important;
+            background-color: black !important;
         }
         .navbtn:hover{
-            background-color: #50ba42;
-            color: white;
+            background-color: #50ba42 !important;
+            color: white !important;
             border-radius: 5px;
+        }
+        .navbar-brand {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .navbar-toggler {
+            background-color: #50ba42 !important;
+            border-color: #50ba42 !important;
+        }
+        .dropdown-menu {
+            background-color: black !important;
+            border: 1px solid #50ba42 !important;
+        }
+        .dropdown-item {
+            color: #50ba42 !important;
+            background-color: black !important;
+        }
+        .dropdown-item:hover {
+            background-color: #50ba42 !important;
+            color: white !important;
         }
         .sellbtn{
             background-color: #127e81;
@@ -29,10 +70,11 @@
             height: 80px;
             padding-top: 10px;
             font-size: 1.2rem;
+            color: #50ba42;
         }
         .navbar-brand {
             font-weight: bold;
-            color: #50ba42 !important;
+            color: #50ba42;
         }
         .btn-primary {
             background-color: #2d5a27;
@@ -49,16 +91,15 @@
             transform: translateY(-5px);
         }
         .footer {
-            background-color: #2d5a27;
-            color: white;
-            margin-top: 50px;
+            border: 1px solid #50ba42;
         }
+       
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light bar">
+    <nav class="navbar navbar-expand-lg bar">
         <div class="container">
             <a class="navbar-brand" style="font-size: 2rem;" href="{% url 'main:home' %}">
                 <i class="fas fa-recycle" style="margin-right: 8px;"></i> EcoFinds
