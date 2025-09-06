@@ -2,46 +2,71 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 import json
+import logging
+from .gemini_service import GeminiService
+
+logger = logging.getLogger(__name__)
 
 
-@login_required
 def chat_view(request):
     """
-    Chat interface view
+    Chat interface view - accessible to all users
     """
     return render(request, 'chatbot/chat.html')
 
 
 @csrf_exempt
-@login_required
 def chat_api(request):
     """
-    Chat API endpoint
+    Chat API endpoint with Gemini integration
     """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            message = data.get('message', '')
+            message = data.get('message', '').strip()
             
-            # Simple chatbot logic - you can integrate with AI services here
-            response = get_chatbot_response(message)
+            if not message:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Message cannot be empty'
+                }, status=400)
+            
+            # Check if Gemini API key is configured
+            if not settings.GEMINI_API_KEY:
+                logger.warning("GEMINI_API_KEY not configured, using fallback response")
+                response = get_chatbot_response(message)
+            else:
+                try:
+                    # Use Gemini API for response
+                    gemini_service = GeminiService()
+                    response = gemini_service.get_chat_response(message)
+                except Exception as e:
+                    logger.error(f"Gemini API error: {str(e)}")
+                    # Fallback to simple response if Gemini fails
+                    response = get_chatbot_response(message)
             
             return JsonResponse({
                 'success': True,
                 'response': response
             })
             
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid JSON data'
+            }, status=400)
         except Exception as e:
+            logger.error(f"Chat API error: {str(e)}")
             return JsonResponse({
                 'success': False,
                 'message': 'Error processing message'
             }, status=500)
     
-    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
 
 
-@login_required
 def chat_history(request):
     """
     Chat history view

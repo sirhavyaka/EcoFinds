@@ -10,9 +10,10 @@
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold text-primary">Find Amazing Second-Hand Products</h1>
                 <p class="lead">Discover unique items, save money, and contribute to a sustainable future. Buy and sell with confidence on EcoFinds.</p>
-                <div class="d-flex gap-3">
+                <div class="d-flex gap-3 flex-wrap">
                     <a href="{% url 'main:product_list' %}" class="btn btn-primary btn-lg">Shop Now</a>
                     <a href="{% url 'firebase_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                    
                 </div>
             </div>
             <div class="col-lg-6">
@@ -118,6 +119,8 @@
     </div>
 </section>
 {% endif %}
+
+
 
 <!-- Why Choose EcoFinds -->
 <section class="py-5 bg-light">
