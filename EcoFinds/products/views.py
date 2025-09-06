@@ -205,7 +205,13 @@ def create_product(request):
             else:
                 messages.info(request, 'No images uploaded. You can add images later by editing the product.')
             
-            messages.success(request, f'Product "{product.title}" created successfully!')
+            # Add points for listing a product
+            profile = request.user.profile
+            profile.add_points(10)  # 10 points for listing a product
+            profile.total_products_listed += 1
+            profile.save()
+            
+            messages.success(request, f'Product "{product.title}" created successfully! You earned 10 points!')
             return redirect('products:product_detail', slug=product.slug)
             
         except Exception as e:

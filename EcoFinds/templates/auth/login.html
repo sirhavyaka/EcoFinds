@@ -4,12 +4,22 @@
 {% block title %}Login - EcoFinds{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<style>
+.container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+</style>
+<div class="container" style="margin-top: 0; padding-top: 0;">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">
+                    <h2 class="card-title text-center">
                         <i class="fas fa-sign-in-alt text-success"></i> Login
                     </h2>
                     
@@ -24,7 +34,7 @@
                     
                     <form method="post">
                         {% csrf_token %}
-                        <div class="mb-3">
+                        <div class="">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>

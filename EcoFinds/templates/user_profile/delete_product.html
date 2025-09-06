@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Product - EcoFinds{% endblock %}
+
+{% block content %}
+<style>
+body {
+    background-color: black !important;
+    color: #50ba42 !important;
+}
+
+.container {
+    background-color: black !important;
+    color: #50ba42 !important;
+}
+
+.card {
+    background-color: black !important;
+    color: #50ba42 !important;
+    border: 1px solid #50ba42 !important;
+}
+
+.card-header {
+    background-color: black !important;
+    color: #50ba42 !important;
+    border-bottom: 1px solid #50ba42 !important;
+}
+
+.card-body {
+    background-color: black !important;
+    color: #50ba42 !important;
+}
+
+.text-muted {
+    color: #50ba42 !important;
+    opacity: 0.7;
+}
+
+.text-warning {
+    color: #50ba42 !important;
+}
+
+.alert-warning {
+    background-color: #333 !important;
+    border-color: #50ba42 !important;
+    color: #50ba42 !important;
+}
+
+.btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.btn-outline-secondary {
+    border-color: #50ba42 !important;
+    color: #50ba42 !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #50ba42 !important;
+    color: black !important;
+}
+
+.bg-light {
+    background-color: #333 !important;
+}
+</style>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning"></i> Delete Product
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" class="img-fluid rounded mb-3" alt="{{ product.title }}" style="max-height: 200px;">
+                        {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <h5>{{ product.title }}</h5>
+                        <p class="text-muted">₹{{ product.price }}</p>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. Are you sure you want to delete this product?
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-2"></i>Yes, Delete Product
+                            </button>
+                            <a href="{% url 'user_profile:profile_view' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

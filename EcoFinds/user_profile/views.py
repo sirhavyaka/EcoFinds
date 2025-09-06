@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import UserProfile, Address, SellerProfile
-from products.models import Wishlist
+from django.db.models import Q, Count
+from .models import UserProfile, Address, SellerProfile, Milestone, UserMilestone, Chat, Message
+from products.models import Wishlist, Product
 from orders.models import Order
 import json
 
@@ -11,14 +13,33 @@ import json
 @login_required
 def profile_view(request):
     """
-    User profile view
+    User profile view with product management and progress tracking
     """
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     addresses = Address.objects.filter(user=request.user)
     
+    # Get user's products
+    user_products = Product.objects.filter(seller=request.user).order_by('-created_at')
+    
+    # Get user's milestones
+    user_milestones = UserMilestone.objects.filter(user=request.user)
+    available_milestones = Milestone.objects.filter(
+        is_active=True,
+        points_required__lte=profile.points
+    ).exclude(
+        id__in=user_milestones.values_list('milestone_id', flat=True)
+    )
+    
+    # Get user's chats
+    user_chats = Chat.objects.filter(participants=request.user).order_by('-updated_at')
+    
     context = {
         'profile': profile,
         'addresses': addresses,
+        'user_products': user_products,
+        'user_milestones': user_milestones,
+        'available_milestones': available_milestones,
+        'user_chats': user_chats,
     }
     
     return render(request, 'user_profile/profile.html', context)
@@ -251,3 +272,162 @@ def wishlist_view(request):
     }
     
     return render(request, 'user_profile/wishlist.html', context)
+
+
+@login_required
+def delete_product(request, product_id):
+    """
+    Delete user's product
+    """
+    product = get_object_or_404(Product, id=product_id, seller=request.user)
+    
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Product deleted successfully')
+        return redirect('user_profile:profile_view')
+    
+    context = {
+        'product': product,
+    }
+    
+    return render(request, 'user_profile/delete_product.html', context)
+
+
+@login_required
+def claim_milestone(request, milestone_id):
+    """
+    Claim a milestone reward
+    """
+    milestone = get_object_or_404(Milestone, id=milestone_id, is_active=True)
+    profile = request.user.profile
+    
+    if profile.points >= milestone.points_required:
+        user_milestone, created = UserMilestone.objects.get_or_create(
+            user=request.user,
+            milestone=milestone
+        )
+        
+        if created:
+            messages.success(request, f'Milestone "{milestone.name}" claimed successfully!')
+        else:
+            messages.info(request, 'Milestone already claimed')
+    else:
+        messages.error(request, 'Insufficient points to claim this milestone')
+    
+    return redirect('user_profile:profile_view')
+
+
+# Chat Views
+@login_required
+def start_chat(request, user_id, product_id=None):
+    """
+    Start a chat with another user
+    """
+    other_user = get_object_or_404(User, id=user_id)
+    
+    if other_user == request.user:
+        messages.error(request, 'Cannot start chat with yourself')
+        return redirect('user_profile:profile_view')
+    
+    # Check if chat already exists
+    existing_chat = Chat.objects.filter(
+        participants=request.user
+    ).filter(
+        participants=other_user
+    ).first()
+    
+    if existing_chat:
+        return redirect('user_profile:chat_detail', chat_id=existing_chat.id)
+    
+    # Create new chat
+    chat = Chat.objects.create()
+    chat.participants.add(request.user, other_user)
+    
+    if product_id:
+        try:
+            product = Product.objects.get(id=product_id)
+            chat.product = product
+            chat.save()
+        except Product.DoesNotExist:
+            pass
+    
+    return redirect('user_profile:chat_detail', chat_id=chat.id)
+
+
+@login_required
+def chat_list(request):
+    """
+    List all user's chats
+    """
+    chats = Chat.objects.filter(participants=request.user).order_by('-updated_at')
+    
+    context = {
+        'chats': chats,
+    }
+    
+    return render(request, 'user_profile/chat_list.html', context)
+
+
+@login_required
+def chat_detail(request, chat_id):
+    """
+    Chat detail view
+    """
+    chat = get_object_or_404(Chat, id=chat_id, participants=request.user)
+    messages_list = Message.objects.filter(chat=chat).order_by('created_at')
+    
+    # Mark messages as read
+    Message.objects.filter(chat=chat, sender__in=chat.participants.exclude(id=request.user.id)).update(is_read=True)
+    
+    context = {
+        'chat': chat,
+        'messages': messages_list,
+        'other_user': chat.participants.exclude(id=request.user.id).first(),
+    }
+    
+    return render(request, 'user_profile/chat_detail.html', context)
+
+
+@login_required
+def send_message(request, chat_id):
+    """
+    Send a message in chat
+    """
+    chat = get_object_or_404(Chat, id=chat_id, participants=request.user)
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            content = data.get('content', '').strip()
+            
+            if content:
+                message = Message.objects.create(
+                    chat=chat,
+                    sender=request.user,
+                    content=content
+                )
+                
+                # Update chat timestamp
+                chat.save()
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Message sent successfully',
+                    'message_id': message.id
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Message content cannot be empty'
+                }, status=400)
+                
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': 'Error sending message'
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    }, status=405)

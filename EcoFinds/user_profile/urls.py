@@ -14,4 +14,17 @@ urlpatterns = [
     path('seller/register/', views.register_seller, name='register_seller'),
     path('orders/', views.user_orders, name='user_orders'),
     path('wishlist/', views.wishlist_view, name='wishlist_view'),
+    
+    # Product Management
+    path('products/<int:product_id>/delete/', views.delete_product, name='delete_product'),
+    
+    # Milestones
+    path('milestones/<int:milestone_id>/claim/', views.claim_milestone, name='claim_milestone'),
+    
+    # Chat
+    path('chat/', views.chat_list, name='chat_list'),
+    path('chat/<int:chat_id>/', views.chat_detail, name='chat_detail'),
+    path('chat/<int:chat_id>/send/', views.send_message, name='send_message'),
+    path('chat/start/<int:user_id>/', views.start_chat, name='start_chat'),
+    path('chat/start/<int:user_id>/product/<int:product_id>/', views.start_chat, name='start_chat_with_product'),
 ]

@@ -94,9 +94,9 @@
                 <button class="btn btn-outline-primary" onclick="toggleWishlist({{ product.id }})">
                     <i class="fas fa-heart me-2"></i>Add to Wishlist
                 </button>
-                <button class="btn btn-outline-secondary" onclick="contactSeller()">
-                    <i class="fas fa-message me-2"></i>Contact Seller
-                </button>
+                <a href="{% url 'user_profile:start_chat_with_product' product.seller.id product.id %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-message me-2"></i>Start Chat
+                </a>
             </div>
             {% else %}
             <div class="alert alert-info">
