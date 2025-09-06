@@ -1,0 +1,230 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Products - EcoFinds{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filter-form">
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Search products...">
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Condition Filter -->
+                        <div class="mb-3">
+                            <label for="condition" class="form-label">Condition</label>
+                            <select class="form-select" id="condition" name="condition">
+                                <option value="">All Conditions</option>
+                                <option value="excellent" {% if condition == 'excellent' %}selected{% endif %}>Excellent</option>
+                                <option value="good" {% if condition == 'good' %}selected{% endif %}>Good</option>
+                                <option value="fair" {% if condition == 'fair' %}selected{% endif %}>Fair</option>
+                                <option value="poor" {% if condition == 'poor' %}selected{% endif %}>Poor</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-3">
+                            <label class="form-label">Price Range</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="min_price" placeholder="Min" value="{{ min_price }}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="max_price" placeholder="Max" value="{{ max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort -->
+                        <div class="mb-3">
+                            <label for="sort" class="form-label">Sort By</label>
+                            <select class="form-select" id="sort" name="sort">
+                                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+                                <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest First</option>
+                                <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{% url 'main:product_list' %}" class="btn btn-outline-secondary">Clear All</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    {% if current_category %}
+                        {% for category in categories %}
+                            {% if category.slug == current_category %}
+                                {{ category.name }} Products
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        All Products
+                    {% endif %}
+                    <small class="text-muted">({{ products|length }} items)</small>
+                </h2>
+            </div>
+
+            {% if products %}
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            {% if product.images.first %}
+                                <img src="{{ product.images.first.image.url }}" class="card-img-top" alt="{{ product.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200/2d5a27/ffffff?text=No+Image" class="card-img-top" alt="{{ product.title }}" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.title|truncatechars:30 }}</h5>
+                                <p class="card-text text-muted">{{ product.description|truncatechars:80 }}</p>
+                                
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="h5 text-primary">₹{{ product.price }}</span>
+                                        <span class="badge bg-secondary">{{ product.condition|title }}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt"></i> {{ product.city }}, {{ product.state }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock"></i> {{ product.created_at|timesince }} ago
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'main:product_detail' product.slug %}" class="btn btn-primary btn-sm">View Details</a>
+                                        {% if user.is_authenticated %}
+                                        <button class="btn btn-outline-primary btn-sm" onclick="addToCart({{ product.id }})">
+                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination would go here -->
+                <nav aria-label="Product pagination">
+                    <ul class="pagination justify-content-center">
+                        <!-- Add pagination logic here -->
+                    </ul>
+                </nav>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No products found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or browse all products.</p>
+                    <a href="{% url 'main:product_list' %}" class="btn btn-primary">View All Products</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addToCart(productId) {
+    if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+        alert('Please login to add items to cart');
+        return;
+    }
+
+    fetch('{% url "main:add_to_cart" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showAlert('Product added to cart!', 'success');
+            // Update cart count in navbar if needed
+        } else {
+            showAlert(data.message || 'Failed to add product to cart', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred. Please try again.', 'danger');
+    });
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Insert at the top of the main content
+    const main = document.querySelector('main');
+    main.insertBefore(alertDiv, main.firstChild);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}
