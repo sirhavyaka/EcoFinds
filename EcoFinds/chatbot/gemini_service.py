@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class GeminiService:
     """Service class for interacting with Google's Gemini API"""
     
-    def __init__(self):
+    def _init_(self):
         self.api_key = settings.GEMINI_API_KEY
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY environment variable is not set")
