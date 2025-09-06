@@ -1,140 +1,104 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Register - EcoFinds{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h2 class="fw-bold text-primary">Join EcoFinds</h2>
-                        <p class="text-muted">Create your account and start buying/selling</p>
-                    </div>
-
-                    <!-- Firebase Auth UI -->
-                    <div id="firebaseui-auth-container"></div>
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-user-plus text-success"></i> Register
+                    </h2>
                     
-                    <!-- Loading indicator -->
-                    <div id="loading" class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.username.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                        <p class="mt-2">Loading authentication...</p>
-                    </div>
-
-                    <!-- Error message -->
-                    <div id="error-message" class="alert alert-danger d-none" role="alert">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span id="error-text"></span>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <p class="text-muted">Already have an account? <a href="{% url 'firebase_auth:login' %}" class="text-primary">Sign in</a></p>
+                        
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Password</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.password1.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Confirm Password</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.password2.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? 
+                            <a href="{% url 'auth:login' %}" class="text-success">Login here</a>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
-<!-- Firebase UI -->
-<script src="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.js"></script>
-<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.css" />
+<style>
+/* Style Django form fields */
+.form-control {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Firebase UI
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
-    
-    // Hide loading indicator
-    document.getElementById('loading').style.display = 'none';
-    
-    // Configure Firebase UI
-    const uiConfig = {
-        callbacks: {
-            signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-                // Get the ID token
-                authResult.user.getIdToken().then(function(idToken) {
-                    // Send the token to Django backend
-                    fetch('{% url "firebase_auth:firebase_login" %}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: JSON.stringify({
-                            idToken: idToken
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Redirect to home page
-                            window.location.href = '{% url "main:home" %}';
-                        } else {
-                            showError(data.message || 'Registration failed');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showError('Registration failed. Please try again.');
-                    });
-                });
-                return false; // Prevent redirect
-            },
-            uiShown: function() {
-                // Hide loading indicator when UI is shown
-                document.getElementById('loading').style.display = 'none';
-            }
-        },
-        signInFlow: 'popup',
-        signInSuccessUrl: '{% url "main:home" %}',
-        signInOptions: [
-            {
-                provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                customParameters: {
-                    prompt: 'select_account'
-                }
-            },
-            {
-                provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                requireDisplayName: true
-            }
-        ],
-        tosUrl: '{% url "main:about" %}',
-        privacyPolicyUrl: '{% url "main:about" %}'
-    };
-
-    // Start the Firebase UI
-    ui.start('#firebaseui-auth-container', uiConfig);
-
-    // Function to show error messages
-    function showError(message) {
-        const errorDiv = document.getElementById('error-message');
-        const errorText = document.getElementById('error-text');
-        errorText.textContent = message;
-        errorDiv.classList.remove('d-none');
-    }
-
-    // Function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-});
-</script>
+.form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
 {% endblock %}

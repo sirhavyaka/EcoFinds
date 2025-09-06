@@ -87,8 +87,13 @@
             <div class="text-center mt-5">
                 <h4 class="text-primary">Join the EcoFinds Community</h4>
                 <p>Be part of the movement towards sustainable consumption</p>
-                <a href="{% url 'firebase_auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
-                <a href="{% url 'firebase_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
+                    <a href="{% url 'products:create_product' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                {% else %}
+                    <a href="{% url 'auth:register' %}" class="btn btn-primary btn-lg me-3">Start Shopping</a>
+                    <a href="{% url 'auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                {% endif %}
             </div>
         </div>
     </div>

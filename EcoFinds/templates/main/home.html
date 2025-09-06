@@ -11,8 +11,12 @@
                 <h1 class="display-4 fw-bold text-primary">Find Amazing Second-Hand Products</h1>
                 <p class="lead">Discover unique items, save money, and contribute to a sustainable future. Buy and sell with confidence on EcoFinds.</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'main:product_list' %}" class="btn btn-primary btn-lg">Shop Now</a>
-                    <a href="{% url 'firebase_auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-primary btn-lg">Shop Now</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'products:create_product' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                    {% else %}
+                        <a href="{% url 'auth:register' %}" class="btn btn-outline-primary btn-lg">Start Selling</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-6">
@@ -33,7 +37,7 @@
                     <div class="card-body">
                         <i class="fas fa-{{ category.name|lower|slice:':1' }} fa-3x text-primary mb-3"></i>
                         <h5 class="card-title">{{ category.name }}</h5>
-                        <a href="{% url 'main:product_list' %}?category={{ category.slug }}" class="btn btn-outline-primary btn-sm">View Products</a>
+                        <a href="{% url 'products:product_list' %}?category={{ category.slug }}" class="btn btn-outline-primary btn-sm">View Products</a>
                     </div>
                 </div>
             </div>
@@ -69,7 +73,7 @@
                                 <span class="badge bg-secondary">{{ product.condition|title }}</span>
                             </div>
                             <div class="mt-2">
-                                <a href="{% url 'main:product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">View Details</a>
+                                <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -78,7 +82,7 @@
             {% endfor %}
         </div>
         <div class="text-center mt-4">
-            <a href="{% url 'main:product_list' %}" class="btn btn-outline-primary">View All Products</a>
+            <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary">View All Products</a>
         </div>
     </div>
 </section>
@@ -107,7 +111,7 @@
                                 <span class="badge bg-secondary">{{ product.condition|title }}</span>
                             </div>
                             <div class="mt-2">
-                                <a href="{% url 'main:product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">View Details</a>
+                                <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">View Details</a>
                             </div>
                         </div>
                     </div>

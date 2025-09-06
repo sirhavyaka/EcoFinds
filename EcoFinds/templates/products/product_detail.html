@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.title }} - EcoFinds{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-6">
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in product.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.title }}" style="height: 400px; object-fit: cover;">
+                    </div>
+                    {% empty %}
+                    <div class="carousel-item active">
+                        <img src="https://via.placeholder.com/500x400/2d5a27/ffffff?text=No+Image" class="d-block w-100" alt="{{ product.title }}" style="height: 400px; object-fit: cover;">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if product.images.count > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <h1 class="h2 mb-3">{{ product.title }}</h1>
+            
+            <div class="d-flex align-items-center mb-3">
+                <span class="h3 text-primary me-3">₹{{ product.price }}</span>
+                {% if product.original_price %}
+                <span class="text-muted text-decoration-line-through me-3">₹{{ product.original_price }}</span>
+                <span class="badge bg-success">
+                    {{ product.get_discount_percentage }}% OFF
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <span class="badge bg-secondary me-2">{{ product.condition|title }}</span>
+                <span class="badge bg-info">{{ product.category.name }}</span>
+            </div>
+
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>{{ product.description|linebreaks }}</p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <strong>Brand:</strong> {{ product.brand|default:"Not specified" }}
+                </div>
+                <div class="col-6">
+                    <strong>Model:</strong> {{ product.model|default:"Not specified" }}
+                </div>
+                {% if product.year_purchased %}
+                <div class="col-6 mt-2">
+                    <strong>Year Purchased:</strong> {{ product.year_purchased }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <h5>Location</h5>
+                <p><i class="fas fa-map-marker-alt text-primary me-2"></i>{{ product.city }}, {{ product.state }}, {{ product.country }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h5>Seller Information</h5>
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <strong>{{ product.seller.get_full_name|default:product.seller.username }}</strong><br>
+                        <small class="text-muted">Member since {{ product.seller.date_joined|date:"M Y" }}</small>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg" onclick="addToCart({{ product.id }})">
+                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                </button>
+                <button class="btn btn-outline-primary" onclick="toggleWishlist({{ product.id }})">
+                    <i class="fas fa-heart me-2"></i>Add to Wishlist
+                </button>
+                <button class="btn btn-outline-secondary" onclick="contactSeller()">
+                    <i class="fas fa-message me-2"></i>Contact Seller
+                </button>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Please <a href="{% url 'auth:login' %}">login</a> to add items to cart or contact the seller.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Product Reviews -->
+    {% if reviews %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Reviews ({{ reviews.count }})</h3>
+            <div class="row">
+                {% for review in reviews %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title">{{ review.user.get_full_name|default:review.user.username }}</h6>
+                                <div class="text-warning">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <h6 class="text-primary">{{ review.title }}</h6>
+                            <p class="card-text">{{ review.comment }}</p>
+                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Related Products</h3>
+            <div class="row">
+                {% for related_product in related_products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        {% if related_product.images.first %}
+                            <img src="{{ related_product.images.first.image.url }}" class="card-img-top" alt="{{ related_product.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x200/2d5a27/ffffff?text=No+Image" class="card-img-top" alt="{{ related_product.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ related_product.title|truncatechars:30 }}</h6>
+                            <p class="card-text text-muted">{{ related_product.description|truncatechars:60 }}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h6 text-primary">₹{{ related_product.price }}</span>
+                                    <span class="badge bg-secondary">{{ related_product.condition|title }}</span>
+                                </div>
+                                <a href="{% url 'products:product_detail' related_product.slug %}" class="btn btn-primary btn-sm w-100 mt-2">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addToCart(productId) {
+    fetch('{% url "main:add_to_cart" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Product added to cart!', 'success');
+        } else {
+            showAlert(data.message || 'Failed to add product to cart', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred. Please try again.', 'danger');
+    });
+}
+
+function toggleWishlist(productId) {
+    fetch('{% url "products:toggle_wishlist" product_id=0 %}'.replace('0', productId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(data.message, 'success');
+        } else {
+            showAlert(data.message || 'Failed to update wishlist', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred. Please try again.', 'danger');
+    });
+}
+
+function contactSeller() {
+    alert('Contact seller functionality will be implemented soon!');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const main = document.querySelector('main');
+    main.insertBefore(alertDiv, main.firstChild);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

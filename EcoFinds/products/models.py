@@ -100,7 +100,7 @@ class ProductImage(models.Model):
     def save(self, *args, **kwargs):
         if self.is_primary:
             # Ensure only one primary image per product
-            ProductImage.objects.filter(product=self.product, is_primary=True).update(is_primary=False)
+            ProductImage.objects.filter(product=self.product, is_primary=True).exclude(id=self.id).update(is_primary=False)
         super().save(*args, **kwargs)
 
 

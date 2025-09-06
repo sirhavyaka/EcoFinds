@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db.models import Q
-from .models import Product, Category, ProductReview, Wishlist
+from django.contrib import messages
+from django.utils.text import slugify
+from .models import Product, Category, ProductReview, Wishlist, ProductImage
 import json
 
 
@@ -138,8 +140,77 @@ def create_product(request):
     Create new product
     """
     if request.method == 'POST':
-        # Handle product creation
-        pass
+        try:
+            # Get form data
+            title = request.POST.get('title')
+            description = request.POST.get('description')
+            category_id = request.POST.get('category')
+            price = request.POST.get('price')
+            original_price = request.POST.get('original_price')
+            condition = request.POST.get('condition')
+            brand = request.POST.get('brand', '')
+            model = request.POST.get('model', '')
+            year_purchased = request.POST.get('year_purchased')
+            city = request.POST.get('city')
+            state = request.POST.get('state')
+            
+            # Validate required fields
+            if not all([title, description, category_id, price, condition, city, state]):
+                messages.error(request, 'Please fill in all required fields.')
+                return redirect('products:create_product')
+            
+            # Check if images are uploaded
+            images = request.FILES.getlist('images')
+            if not images:
+                messages.error(request, 'Please upload at least one image for your product.')
+                return redirect('products:create_product')
+            
+            # Get category
+            try:
+                category = Category.objects.get(id=category_id)
+            except Category.DoesNotExist:
+                messages.error(request, 'Invalid category selected.')
+                return redirect('products:create_product')
+            
+            # Create product
+            product = Product.objects.create(
+                title=title,
+                slug=slugify(title),
+                description=description,
+                category=category,
+                seller=request.user,
+                price=price,
+                original_price=original_price if original_price else None,
+                condition=condition,
+                brand=brand,
+                model=model,
+                year_purchased=int(year_purchased) if year_purchased else None,
+                city=city,
+                state=state,
+                status='available'
+            )
+            
+            # Handle image uploads
+            
+            if images:
+                for i, image in enumerate(images[:5]):  # Limit to 5 images
+                    try:
+                        ProductImage.objects.create(
+                            product=product,
+                            image=image,
+                            is_primary=(i == 0)  # First image is primary
+                        )
+                    except Exception as img_error:
+                        messages.warning(request, f'Warning: Could not upload image {i+1}: {img_error}')
+            else:
+                messages.info(request, 'No images uploaded. You can add images later by editing the product.')
+            
+            messages.success(request, f'Product "{product.title}" created successfully!')
+            return redirect('products:product_detail', slug=product.slug)
+            
+        except Exception as e:
+            messages.error(request, f'Error creating product: {str(e)}')
+            return redirect('products:create_product')
     
     categories = Category.objects.all()
     context = {

@@ -40,9 +40,8 @@ INSTALLED_APPS = [
     # Third party apps
     "rest_framework",
     "corsheaders",
-    "firebase_admin",
     # Local apps
-    "firebase_auth",
+    "custom_auth",
     "main",
     "chatbot",
     "products",
@@ -130,13 +129,19 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Media files (User uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Firebase Configuration
-FIREBASE_CREDENTIALS_PATH = BASE_DIR / "firebase_credentials.json"
+# Django Authentication Settings
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
@@ -160,13 +165,12 @@ STATICFILES_DIRS = [
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'firebase_auth.backends.FirebaseAuthenticationBackend',
 ]
 
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'firebase_auth.authentication.FirebaseAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -176,7 +180,3 @@ REST_FRAMEWORK = {
 # Email settings (for development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Login/Logout URLs
-LOGIN_URL = '/firebase_auth/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'

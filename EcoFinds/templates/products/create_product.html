@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Product - EcoFinds{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-plus-circle text-primary me-2"></i>
+                        Create New Product
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">Basic Information</h5>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="title" class="form-label">Product Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                                <div class="form-text">Give your product a clear, descriptive title</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Category *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required placeholder="Describe your product in detail..."></textarea>
+                            <div class="form-text">Be detailed about the condition, features, and any defects</div>
+                        </div>
+                        
+                        <!-- Product Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">Product Details</h5>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="price" class="form-label">Price (₹) *</label>
+                                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="original_price" class="form-label">Original Price (₹)</label>
+                                <input type="number" class="form-control" id="original_price" name="original_price" step="0.01" min="0.01">
+                                <div class="form-text">Optional: Original retail price</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="condition" class="form-label">Condition *</label>
+                                <select class="form-select" id="condition" name="condition" required>
+                                    <option value="">Select condition</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="good">Good</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="poor">Poor</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="brand" class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="model" class="form-label">Model</label>
+                                <input type="text" class="form-control" id="model" name="model">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="year_purchased" class="form-label">Year Purchased</label>
+                                <input type="number" class="form-control" id="year_purchased" name="year_purchased" min="1900" max="2025">
+                            </div>
+                        </div>
+                        
+                        <!-- Location -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">Location</h5>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state" class="form-label">State *</label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Images -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2">Product Images</h5>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="images" class="form-label">Upload Images *</label>
+                            <input type="file" class="form-control" id="images" name="images" multiple accept="image/*" required>
+                            <div class="form-text">Upload multiple images (up to 5). First image will be the main image. <strong>At least one image is required.</strong></div>
+                        </div>
+                        
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Create Product
+                            </button>
+                            <a href="{% url 'products:product_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('images');
+    const form = document.querySelector('form');
+    
+    // Show selected files
+    imageInput.addEventListener('change', function() {
+        const files = this.files;
+        const fileCount = files.length;
+        
+        // Remove existing file list
+        const existingList = document.getElementById('file-list');
+        if (existingList) {
+            existingList.remove();
+        }
+        
+        if (fileCount > 0) {
+            // Create file list
+            const fileList = document.createElement('div');
+            fileList.id = 'file-list';
+            fileList.className = 'mt-2';
+            fileList.innerHTML = '<h6>Selected Images:</h6><ul class="list-unstyled">';
+            
+            for (let i = 0; i < Math.min(fileCount, 5); i++) {
+                const file = files[i];
+                fileList.innerHTML += `<li><i class="fas fa-image text-primary me-2"></i>${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</li>`;
+            }
+            
+            if (fileCount > 5) {
+                fileList.innerHTML += `<li class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Only the first 5 images will be uploaded</li>`;
+            }
+            
+            fileList.innerHTML += '</ul>';
+            imageInput.parentNode.appendChild(fileList);
+        }
+    });
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const files = imageInput.files;
+        
+        if (files.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one image for your product.');
+            imageInput.focus();
+            return false;
+        }
+        
+        // Check file sizes (max 5MB per file)
+        for (let file of files) {
+            if (file.size > 5 * 1024 * 1024) {
+                e.preventDefault();
+                alert(`File "${file.name}" is too large. Please select images smaller than 5MB.`);
+                return false;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

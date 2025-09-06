@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,7 +56,7 @@
                         <a class="nav-link" href="{% url 'main:home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'main:product_list' %}">Products</a>
+                        <a class="nav-link" href="{% url 'products:product_list' %}">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:about' %}">About</a>
@@ -81,15 +82,15 @@
                                 <li><a class="dropdown-item" href="{% url 'user_profile:user_orders' %}">My Orders</a></li>
                                 <li><a class="dropdown-item" href="{% url 'user_profile:wishlist_view' %}">Wishlist</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'firebase_auth:firebase_logout' %}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'firebase_auth:login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'auth:login' %}">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'firebase_auth:register' %}">Register</a>
+                            <a class="nav-link" href="{% url 'auth:register' %}">Register</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -126,7 +127,7 @@
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'main:home' %}" class="text-light">Home</a></li>
-                        <li><a href="{% url 'main:product_list' %}" class="text-light">Products</a></li>
+                        <li><a href="{% url 'products:product_list' %}" class="text-light">Products</a></li>
                         <li><a href="{% url 'main:about' %}" class="text-light">About</a></li>
                         <li><a href="{% url 'main:contact' %}" class="text-light">Contact</a></li>
                     </ul>
@@ -151,26 +152,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    
-    <!-- Firebase Configuration -->
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCX_nBRYNo2X-YXlTgBColQXWIOs3tE0rE",
-            authDomain: "ecofind-fdf6c.firebaseapp.com",
-            projectId: "ecofind-fdf6c",
-            storageBucket: "ecofind-fdf6c.firebasestorage.app",
-            messagingSenderId: "1017829792004",
-            appId: "1:1017829792004:web:16cda26dc229633dbd9851",
-            measurementId: "G-89WDSVMZ89"
-        };
-        
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script>
+    <!-- Django Auth Script -->
+    <script src="{% static 'js/django-auth.js' %}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>
